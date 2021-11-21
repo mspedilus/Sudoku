@@ -14,10 +14,11 @@ int auto_fill(int size, int sudoku[size][size]);
 void abort_game(char* response, char* function, int size, int fill, int sudoku[size][size], char check_location[][3]);
 int print_dot(int m, int n, int counter, char check_location[][3]);
 
-
+//Implement sudoku solver. If the game can be solved at least once, print board and let the user play
 //Fix autofill bug for sizes 6 & 9
 //Fix repeat
 //DIAGONAL FROM LEFT TO RIGHT ISNT WORKING PROPERLY. SHOULD ONLY BE MIDDLE ROW BUT ITS COUNTING OTHER DIAGONAl ROWS TOO (SOMETIMES??)
+
 void main(void){
 
   //Initializes rand() function & sudoku board
@@ -26,7 +27,7 @@ void main(void){
 
   int x = 0, // row location
       y = 0, // column location
-      size = 9, // Size of sudoku board
+      size = 4, // Size of sudoku board
       valid = 0,
       new_value = 0,
       has_zero = 1,
@@ -41,34 +42,38 @@ void main(void){
 
       //Generates random numbers (from 1-4) in random locations (from 0-3) in the array
       for(int i = 0; i < fill; i++){
+
         int temp_x = rand()%size,
             temp_y = rand()%size,
             result;
-        random_val = rand()%size + 1;
+            random_val = rand()%size + 1;
 
         //Makes sure that there will be 3 filled for the start of sudoku
         while (sudoku[temp_x][temp_y] != 0){
           temp_x = rand()%size;
           temp_y = rand()%size;
         }
-
+      //  printf("PASSED1");
         //Autofill random values in random locations
         old_value = sudoku[temp_x][temp_y];
         sudoku[temp_x][temp_y] = random_val;
         result = repeat(temp_x, temp_y, size, sudoku, old_value, new_value, random_val, fill, check_location, &function);
-
+    //    printf("PASSED2");
         //Makes sure that the random val can be placed in the random location
         while(result == 0){
           sudoku[temp_x][temp_y] = rand()%size + 1;
           result = repeat(temp_x, temp_y, size, sudoku, old_value, new_value, random_val, fill, check_location, &function);
         }
 
+      //  printf("PASSED3");
         //Stores locations of the values that you cannot change
         sprintf(check_location[i], "%d%d", temp_x, temp_y);
       }
-      for(int p = 0; p < fill; p++){
+    /*
+    for(int p = 0; p < fill; p++){
         printf("%d) %s\n", p, check_location[p]);
-}
+    }*/
+
     random_val = 0;
 
 
@@ -113,11 +118,18 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
 
   for(int i = 0; i < counter; i++){
     size2--;
-    if((sudoku[x][y] == sudoku[x][i]) && (i != y)){ // Checks corresponding row for any repeating digit
+    if(new_value == 0){
+      break;
+    }
+    else if((sudoku[x][y] == sudoku[x][i]) && (i != y)){ // Checks corresponding row for any repeating digit
       sudoku[x][y] = old_value;
       if (random_val == 0 ){
         printf("Not possible\n");
         valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+        if(new_value == 0){
+          break;
+        }
+        //sudoku[x][y] = old_value;
       }
       return 0;
     }
@@ -126,6 +138,10 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
       if (random_val == 0 ){
         printf("Not possible\n");
         valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+        if(new_value == 0){
+          break;
+        }
+        //sudoku[x][y] = old_value;
       }
       return 0;
     }
@@ -135,6 +151,10 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
         if (random_val == 0 ){
           printf("Not possible\n");
           valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+          if(new_value == 0){
+            break;
+          }
+          //sudoku[x][y] = old_value;
         }
         return 0;
       }
@@ -146,6 +166,10 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
         if (random_val == 0 ){
           printf("Not possible\n");
           valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+          if(new_value == 0){
+            break;
+          }
+          //sudoku[x][y] = old_value;
         }
         return 0;
       }
@@ -154,10 +178,13 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
     else if( (((sudoku[x][y] == sudoku[size2][i]) && (x != size2 && y != i))
                 || ((sudoku[x][y] == sudoku[i][size2]) && (x != i && y != size2)))
                 && (i < (counter/2)) ){
-        sudoku[x][y] = old_value;
         if (random_val == 0 ){
           printf("Not possible\n");
           valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+          if(new_value == 0){
+            break;
+          }
+          //sudoku[x][y] = old_value;
         }
         return 0;
       }
@@ -167,6 +194,10 @@ int repeat(int x, int y, int size, int sudoku[size][size], int old_value, int ne
       if (random_val == 0 ){
         printf("Not possible\n");
         valid_value(&x, &y, size, &new_value, sudoku, &old_value, check_location, fill, &*function);
+        if(new_value == 0){
+          break;
+        }
+        //sudoku[x][y] = old_value;
       }
       return 0;
     }
